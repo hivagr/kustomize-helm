@@ -1,9 +1,10 @@
 ---
-components:
-  - ../base
+#components:
+#  - ../base
 
 resources:
-  - configmap.yaml
+  - ../base
+#  - configmap.yaml
 
 #namespace: dev-namespace
 
