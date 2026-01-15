@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana-staging
+spec:
+  project: default
+  destination:
+    namespace: staging-namespace
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://github.com/hivagr/kustomize-helm
+    targetRevision: HEAD
+    path: helmfile/grafana  # Point to directory with helmfile.yaml
+    plugin:
+      name: helmfile
+      env:
+        - name: environment
+          value: staging
