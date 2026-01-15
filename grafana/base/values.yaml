@@ -5,4 +5,4 @@ service:
 adminUser: admin
 adminPassword: admin
 persistence:
-  enabled: false
+  enabled: true

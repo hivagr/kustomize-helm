@@ -1,11 +1,8 @@
 ---
-# Base configuration
+replicas: 0
 service:
   type: ClusterIP
 adminUser: admin
 adminPassword: admin
 persistence:
-  enabled: true
-
-# Dev overrides
-replicas: 2
+  enabled: false

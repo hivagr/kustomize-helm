@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: applicationset-staging
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        # Staging generator for staging folders
+        repoURL: https://github.com/hivagr/kustomize-helm.git
+        revision: HEAD
+        directories:
+          - path: "kustomize/grafana/staging"
+  template:
+#    metadata:
+#      name: "{{path[1]}}-staging-v2"
+    spec:
+      project: default
+      destination:
+        namespace: staging-namespace
+        server: https://kubernetes.default.svc
+
+      source:
+        repoURL: https://github.com/hivagr/kustomize-helm.git
+        path: "{{path}}"
+        targetRevision: HEAD
+        kustomize: {}
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          #- RespectResourceNamespace=true

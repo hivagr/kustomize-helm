@@ -1,12 +1,5 @@
 ---
-#components:
-#  - ../base
-
-resources:
-  - ../base
-#  - configmap.yaml
-
-#namespace: dev-namespace
+namespace: grafana
 
 helmCharts:
   - name: grafana
@@ -14,6 +7,4 @@ helmCharts:
     version: 10.3.0
     namespace: grafana
     releaseName: grafana
-    valuesFile: ../base/values.yaml
-    additionalValuesFiles:
-      - values.yaml
+    valuesFile: values.yaml
