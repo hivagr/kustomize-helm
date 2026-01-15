@@ -1,0 +1,8 @@
+---
+replicas: 1
+service:
+  type: ClusterIP
+adminUser: admin
+adminPassword: admin
+persistence:
+  enabled: false

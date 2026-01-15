@@ -1,0 +1,18 @@
+---
+components:
+  - ../base
+
+#namespace: staging-namespace
+
+resources:
+  - configmap.yaml
+
+helmCharts:
+  - name: grafana
+    repo: https://grafana.github.io/helm-charts
+    version: 10.3.0
+    namespace: grafana
+    releaseName: grafana
+    valuesFile: ../base/values.yaml
+    additionalValuesFiles:
+      - values.yaml
