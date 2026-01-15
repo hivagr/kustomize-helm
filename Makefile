@@ -8,57 +8,53 @@ help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 # Cluster names
-CLUSTER_1 := kind-cluster-1
-CLUSTER_2 := kind-cluster-2
+CLUSTER_1 := dev-cluster-1
+CLUSTER_2 := staging-cluster-1
+CLUSTER_3 := prod-cluster-1
 
-create-clusters: ## Create two kind clusters
+create-clusters: ## Create three kind clusters
 	kind create cluster --name $(CLUSTER_1)
 	kind create cluster --name $(CLUSTER_2)
+	kind create cluster --name $(CLUSTER_3)
 
-install-argocd: ## Install ArgoCD on both clusters
-	kubectl config use-context kind-$(CLUSTER_1)
-	kubectl create namespace argocd
-	kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-
+install-argocd: ## Install ArgoCD on staging & prodclusters
 	kubectl config use-context kind-$(CLUSTER_2)
-	kubectl create namespace argocd
-	kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+	@echo "👉 Adding Helm repos..."
+	helm repo add argo https://argoproj.github.io/argo-helm
+	helm repo update
+
+	@echo "📦 Installing ArgoCD..."
+	helm install argocd argo/argo-cd \
+		--namespace argocd --create-namespace -f kind/argocd/values.yaml
+	@echo "✅ ArgoCD installed."
+
+	kubectl config use-context kind-$(CLUSTER_3)
+
+	@echo "👉 Adding Helm repos..."
+	helm repo add argo https://argoproj.github.io/argo-helm
+	helm repo update
+
+	@echo "📦 Installing ArgoCD..."
+	helm install argocd argo/argo-cd \
+		--namespace argocd --create-namespace -f kind/argocd/values.yaml
+	@echo "✅ ArgoCD installed."
 
 port-forward-argocd: ## Port-forward services to localhost:3301 and localhost:3302
-	kubectl config use-context kind-$(CLUSTER_1)
-	kubectl -n argocd port-forward service/argocd-server 3301:80 &
-
 	kubectl config use-context kind-$(CLUSTER_2)
-	kubectl -n argocd port-forward service/argocd-server 3302:80 &
+	kubectl -n argocd port-forward service/argocd-server 3301:443 &
+
+	kubectl config use-context kind-$(CLUSTER_3)
+	kubectl -n argocd port-forward service/argocd-server 3302:443 &
 
 delete-argocd: ## Delete ArgoCD on both clusters
-	kubectl config use-context kind-$(CLUSTER_1)
-	kubectl delete namespace argocd
-
 	kubectl config use-context kind-$(CLUSTER_2)
-	kubectl delete namespace argocd
+	helm -n argocd uninstall argocd
 
-get-argocd-password: ## Get ArgoCD admin password for both clusters
-	@echo "ArgoCD admin password for $(CLUSTER_1):"
-	kubectl config use-context kind-$(CLUSTER_1)
-	kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+	kubectl config use-context kind-$(CLUSTER_3)
+	helm -n argocd uninstall argocd
 
-	@echo "ArgoCD admin password for $(CLUSTER_2):"
-	kubectl config use-context kind-$(CLUSTER_2)
-	kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
-
-run-gitea: ## Start Gitea container connected to kind network
-	docker run -d --name=gitea --network=kind -p 3000:3000 -p 2222:22 \
-		-e USER_UID=1000 -e USER_GID=1000 \
-		-v $$(pwd)/gitea:/data \
-		-e GITEA__server__DOMAIN=localhost \
-		-e GITEA__server__SSH_DOMAIN=localhost \
-		-e GITEA__server__HTTP_PORT=3000 \
-		-e GITEA__admin__USER_NAME=admin \
-		-e GITEA__admin__PASSWORD=admin123 \
-		-e GITEA__admin__EMAIL=admin@example.com \
-		gitea/gitea:latest
-
-clean: ## Clean up: Delete both clusters
+clean: ## Clean up: Delete all three clusters
 	kind delete cluster --name $(CLUSTER_1)
 	kind delete cluster --name $(CLUSTER_2)
+	kind delete cluster --name $(CLUSTER_3)

@@ -12,8 +12,8 @@ spec:
         directories:
           - path: "kustomize/grafana/dev"
   template:
-#    metadata:
-#      name: "{{path[1]}}-dev-v2"
+    metadata:
+      name: "grafana-dev"
     spec:
       project: default
       destination:

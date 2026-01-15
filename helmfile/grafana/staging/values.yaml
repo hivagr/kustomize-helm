@@ -1,0 +1,4 @@
+---
+global:
+  namespace: grafana
+  chartVersion: 10.3.0

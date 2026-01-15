@@ -1,0 +1,24 @@
+---
+environments:
+  dev:
+    values:
+      - dev/values.yaml
+  staging:
+    values:
+      - staging/values.yaml
+  prod:
+    values:
+      - prod/values.yaml
+---
+repositories:
+- name: grafana
+  url: https://grafana.github.io/helm-charts
+
+releases:
+  - name: "grafana"
+    namespace: "{{ .Values.global.namespace }}"
+    chart: grafana/grafana
+    version: "{{ .Values.global.chartVersion }}"
+    values:
+      - values.yaml
+      - "{{ .Environment.Name }}/values.yaml"

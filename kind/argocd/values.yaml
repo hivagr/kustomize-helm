@@ -1,0 +1,43 @@
+---
+
+configs:
+  secret:
+    argocdServerAdminPassword: "$2a$10$YKOursMitu19c5ZOg6IbVeORNw2B5bjvPGTEUqMTLDzKcu.PNoaGO"
+
+controller:
+  metrics:
+    enabled: true
+    service:
+      annotations:
+        k8s.grafana.com/scrape: true
+        k8s.grafana.com/job: integrations/argocd
+        k8s.grafana.com/metrics.portNumber: 8082
+
+repoServer:
+  extraContainers:
+    - name: helmfile-plugin
+      image: travisghansen/argo-cd-helmfile:latest
+      command: [/var/run/argocd/argocd-cmp-server]
+      env:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+      volumeMounts:
+        - mountPath: /var/run/argocd
+          name: var-files
+        - mountPath: /home/argocd/cmp-server/plugins
+          name: plugins
+        - mountPath: /tmp
+          name: helmfile-cmp-tmp
+
+  metrics:
+    enabled: true
+    service:
+      annotations:
+        k8s.grafana.com/scrape: true
+        k8s.grafana.com/job: integrations/argocd
+        k8s.grafana.com/metrics.portNumber: 8084
+
+  volumes:
+    - emptyDir: {}
+      name: helmfile-cmp-tmp

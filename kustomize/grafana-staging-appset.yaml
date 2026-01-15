@@ -12,8 +12,8 @@ spec:
         directories:
           - path: "kustomize/grafana/staging"
   template:
-#    metadata:
-#      name: "{{path[1]}}-staging-v2"
+    metadata:
+      name: "grafana-staging"
     spec:
       project: default
       destination:
