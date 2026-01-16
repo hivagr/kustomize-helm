@@ -1,6 +1,8 @@
+# dev-values
 ---
 global:
-  namespace: grafana
   chartVersion: 10.3.0
+  environment: dev
+  namespace: grafana
 
 replicas: 1

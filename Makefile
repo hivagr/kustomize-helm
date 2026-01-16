@@ -17,7 +17,7 @@ create-clusters: ## Create three kind clusters
 	kind create cluster --name $(CLUSTER_2)
 	kind create cluster --name $(CLUSTER_3)
 
-install-argocd: ## Install ArgoCD on staging & prodclusters
+install-argocd: ## Install ArgoCD on staging & prod clusters
 	kubectl config use-context kind-$(CLUSTER_2)
 
 	@echo "👉 Adding Helm repos..."

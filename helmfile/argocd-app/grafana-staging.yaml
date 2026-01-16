@@ -5,14 +5,11 @@ metadata:
 spec:
   project: default
   destination:
-    namespace: staging-namespace
+    namespace: grafana
     server: https://kubernetes.default.svc
   source:
     repoURL: https://github.com/hivagr/kustomize-helm
     targetRevision: HEAD
-    path: helmfile/grafana  # Point to directory with helmfile.yaml
+    path: helmfile/grafana/staging
     plugin:
       name: helmfile
-      env:
-        - name: environment
-          value: staging

@@ -1,4 +1,8 @@
+# staging-values
 ---
 global:
-  namespace: grafana
   chartVersion: 10.3.0
+  environment: staging
+  namespace: grafana
+
+replicas: 2

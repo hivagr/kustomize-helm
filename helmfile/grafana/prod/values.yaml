@@ -1,6 +1,8 @@
+# prod-values
 ---
 global:
-  namespace: grafana
   chartVersion: 10.3.0
+  environment: prod
+  namespace: grafana
 
-replicas: 1
+replicas: 3
