@@ -1,7 +1,7 @@
 # staging-values
 ---
 global:
-  chartVersion: 10.3.0
+  chartVersion: 10.5.6
   environment: staging
   namespace: grafana
 
